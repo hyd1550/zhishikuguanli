@@ -1,0 +1,504 @@
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">知识库原型 v7</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font-sans)}
+:root{--pu:#7F77DD;--pu-l:#EEEDFE;--pu-d:#3C3489;--pu-m:#534AB7;--sb-bg:#F4F3F0;--bar-bg:#F9F8F6}
+
+.shell{position:relative;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary)}
+
+/* ── top nav ── */
+.tnav{display:flex;align-items:center;gap:10px;padding:0 16px;height:48px;background:var(--color-background-primary);border-bottom:1.5px solid var(--color-border-secondary);flex-shrink:0}
+.logo{display:flex;align-items:center;gap:7px}
+.logo-box{width:28px;height:28px;border-radius:7px;background:var(--pu);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.role-pill{font-size:11px;padding:3px 9px;border-radius:99px;cursor:pointer;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);background:var(--color-background-secondary);white-space:nowrap}
+.role-pill.admin{background:var(--pu-l);color:var(--pu-d);border-color:#AFA9EC}
+.nav-spacer{flex:1}
+.btn-upload{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;font-size:12.5px;border-radius:var(--border-radius-md);background:var(--pu);color:#fff;border:none;cursor:pointer;white-space:nowrap}
+.btn-upload:hover{background:var(--pu-m)}
+
+/* ── layout ── */
+.layout{display:flex;min-height:580px}
+
+/* ── sidebar ── */
+.sb{width:180px;flex-shrink:0;background:var(--sb-bg);border-right:1.5px solid var(--color-border-secondary);display:flex;flex-direction:column;padding:10px 8px}
+.sb-sec{font-size:10px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.07em;text-transform:uppercase;padding:10px 8px 4px}
+.sbn{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:var(--border-radius-md);cursor:pointer;font-size:12.5px;color:var(--color-text-secondary);transition:background .1s;user-select:none;white-space:nowrap}
+.sbn:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.sbn.on{background:var(--color-background-primary);color:var(--pu-d);font-weight:500;border:0.5px solid var(--color-border-tertiary)}
+.ndot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.nbadge{margin-left:auto;font-size:10px;color:var(--color-text-tertiary);background:rgba(0,0,0,.06);padding:1px 5px;border-radius:99px}
+.sbn.on .nbadge{background:var(--pu-l);color:var(--pu-d)}
+.sb-divider{height:0.5px;background:var(--color-border-tertiary);margin:6px 4px}
+.sb-foot{margin-top:auto;padding-top:8px;border-top:0.5px solid var(--color-border-tertiary)}
+
+/* ── main ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--color-background-primary)}
+
+/* search bar — 始终显示在列表上方 */
+.search-bar{padding:12px 16px;background:var(--bar-bg);border-bottom:1px solid var(--color-border-secondary);flex-shrink:0}
+.search-input-wrap{display:flex;align-items:center;gap:8px;background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:0 14px;height:40px;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s,box-shadow .15s}
+.search-input-wrap:focus-within{border-color:var(--pu);box-shadow:0 0 0 3px rgba(127,119,221,.12)}
+.search-input-wrap input{flex:1;background:transparent;border:none;outline:none;font-size:13.5px;color:var(--color-text-primary)}
+.search-input-wrap input::placeholder{color:var(--color-text-tertiary)}
+
+/* type filter pills — 检索框下方 */
+.filter-strip{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
+.filter-label{font-size:11.5px;color:var(--color-text-tertiary);white-space:nowrap;flex-shrink:0}
+.fp{padding:3px 11px;font-size:11.5px;border:0.5px solid var(--color-border-tertiary);border-radius:99px;cursor:pointer;color:var(--color-text-secondary);background:var(--color-background-primary);white-space:nowrap;transition:all .1s}
+.fp:hover{border-color:var(--color-border-secondary);color:var(--color-text-primary)}
+.fp.on{border-color:var(--pu);color:var(--pu-d);background:var(--pu-l);font-weight:500}
+
+/* tab strip (我的上传 / 全部) — 仅在没有选具体类型时显示 */
+.tab-strip{display:flex;align-items:center;gap:6px;padding:8px 16px;border-bottom:1px solid var(--color-border-secondary);background:var(--bar-bg);flex-shrink:0}
+.tab-grp{display:flex;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;background:var(--color-background-primary)}
+.tab{padding:4px 14px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;white-space:nowrap;border-right:0.5px solid var(--color-border-tertiary)}
+.tab:last-child{border-right:none}
+.tab.on{background:var(--pu);color:#fff;font-weight:500}
+.result-count{margin-left:auto;font-size:11.5px;color:var(--color-text-tertiary)}
+
+/* ── list ── */
+.list-area{padding:0 16px 20px;flex:1}
+.list-hd{display:flex;align-items:center;padding:8px 10px 6px;border-bottom:0.5px solid var(--color-border-secondary)}
+.list-hd span{font-size:11px;color:var(--color-text-tertiary)}
+.col-t{flex:1;min-width:0}
+.col-y{width:136px;flex-shrink:0;padding-left:16px}
+.col-a{width:72px;flex-shrink:0;padding-left:16px}
+.col-d{width:72px;flex-shrink:0;padding-left:16px}
+.col-op{width:216px;flex-shrink:0;text-align:left;padding-left:16px}
+.lrow{display:flex;align-items:center;padding:11px 10px;border-bottom:1.5px dashed #E0DDD8;transition:background .15s}
+.lrow:hover{background:var(--color-background-secondary)}
+.lrow.mine{border-left:2.5px solid var(--pu);padding-left:8px}
+.doc-name{font-size:13px;font-weight:500;color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-sub{font-size:11px;color:var(--color-text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:99px}
+.act-row{display:flex;gap:6px;justify-content:flex-start;align-items:center}
+.ia{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;font-size:11.5px;border:1px solid #E5E3DF;border-radius:6px;background:#F5F4F1;color:var(--color-text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500}
+.ia:hover{background:#EEEDFE;color:var(--pu-d);border-color:#C4C0F0}
+.ia.rd{color:#B94040;background:#FEF2F2;border-color:#F5C2C2}
+.ia.rd:hover{background:#FFE4E4;color:#991B1B;border-color:#F4A4A4}
+.empty{text-align:center;padding:48px 16px;color:var(--color-text-tertiary);font-size:13px}
+
+/* 类型详情页头部 */
+.type-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--color-border-secondary);background:var(--color-background-primary);flex-shrink:0}
+.type-header-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.type-header-name{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.type-header-count{font-size:12px;color:var(--color-text-tertiary)}
+.back-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:transparent;margin-left:auto}
+.back-btn:hover{background:var(--color-background-secondary)}
+
+/* ── modal ── */
+.modal-overlay{position:absolute;inset:0;background:rgba(20,20,20,.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:24px}
+.modal{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:14px;width:100%;max-width:460px}
+@media(prefers-color-scheme:dark){
+  .modal{background:#1e1e1e;border-color:rgba(255,255,255,.1)}
+  .modal-foot{background:#161616!important;border-color:rgba(255,255,255,.08)!important}
+  .fr input,.fr textarea,.fr select{background:#2a2a2a!important;border-color:rgba(255,255,255,.1)!important;color:#f0f0f0!important}
+}
+.modal-body{padding:20px 22px}
+.modal-hd{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.modal-hd h3{font-size:14px;font-weight:500;color:var(--color-text-primary);flex:1;margin:0}
+.modal-close{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:transparent;cursor:pointer;color:var(--color-text-secondary)}
+.modal-close:hover{background:var(--color-background-secondary)}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:13px 22px;background:#f5f5f3;border-top:1.5px solid rgba(0,0,0,.13);border-radius:0 0 14px 14px}
+.fr{margin-bottom:12px}
+.fr label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.fr input,.fr textarea,.fr select{width:100%;padding:8px 10px;font-size:13px;border:1px solid #D5D2CD;border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);outline:none;resize:vertical;transition:border-color .1s}
+.fr input:focus,.fr textarea:focus,.fr select:focus{border-color:var(--pu);background:var(--color-background-primary)}
+.fr select option{background:var(--color-background-primary)}
+.hint-box{font-size:11.5px;color:var(--color-text-tertiary);padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:12px;display:flex;align-items:flex-start;gap:5px}
+.upload-zone{border:1.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:18px;text-align:center;color:var(--color-text-tertiary);font-size:12px;cursor:pointer;background:var(--color-background-secondary);transition:all .1s}
+.upload-zone:hover{border-color:var(--pu);background:var(--pu-l)}
+.type-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #D5D2CD;border-radius:var(--border-radius-md);background:var(--color-background-secondary);margin-bottom:5px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;font-size:12.5px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;white-space:nowrap;transition:background .1s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.prim{background:var(--pu);color:#fff;border-color:var(--pu)}
+.btn.prim:hover{background:var(--pu-m)}
+.btn.dark{background:#2C2C2A;color:#fff;border-color:#2C2C2A}
+.btn.dark:hover{background:#444}
+.btn.dang{background:var(--color-background-danger);color:var(--color-text-danger);border-color:var(--color-border-danger)}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2C2C2A;color:#fff;border-radius:var(--border-radius-md);padding:7px 16px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9999;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+
+<div style="padding:1rem 0">
+  <div class="shell" id="shell">
+    <div id="page"></div>
+    <div id="modal-layer"></div>
+  </div>
+</div>
+<div id="toast-el" class="toast"></div>
+
+<script>
+const CC={
+  '产品分析报告'  :{dot:'#7F77DD',tag:'#EEEDFE',txt:'#3C3489'},
+  '技术简报'      :{dot:'#1D9E75',tag:'#E1F5EE',txt:'#085041'},
+  '专利评估报告'  :{dot:'#D4537E',tag:'#FBEAF0',txt:'#4B1528'},
+  '产品/技术研究报告':{dot:'#BA7517',tag:'#FAEEDA',txt:'#412402'},
+  '对标分析报告'  :{dot:'#378ADD',tag:'#E6F1FB',txt:'#0C447C'},
+  '专家交流纪要'  :{dot:'#639922',tag:'#EAF3DE',txt:'#27500A'},
+  '其他'          :{dot:'#888780',tag:'#F1EFE8',txt:'#5F5E5A'},
+};
+let S={
+  role:'user', tab:'all', ft:'全部', q:'',
+  types:Object.keys(CC),
+  docs:[
+    {id:1,title:'聚乳酸（PLA）市场竞品分析报告',desc:'主要竞品产能、定价策略与技术路线对比',type:'产品分析报告',author:'赵敏',mine:false,vis:'public',status:'published',date:'4月6日'},
+    {id:2,title:'PBAT 改性技术研究报告',desc:'PBAT 共混改性工艺路线及力学性能评估',type:'产品/技术研究报告',author:'我',mine:true,vis:'team',status:'published',date:'4月5日'},
+    {id:3,title:'生物降解材料专利态势评估',desc:'国内外核心专利布局及规避策略建议',type:'专利评估报告',author:'王芳',mine:false,vis:'public',status:'published',date:'4月3日'},
+    {id:4,title:'对标巴斯夫 ecoflex® 技术简报',desc:'配方体系、加工工艺与认证标准对比',type:'技术简报',author:'我',mine:true,vis:'team',status:'published',date:'4月1日'},
+    {id:5,title:'Q1 降解膜产品对标分析',desc:'农用地膜降解周期、强度及合规性对标',type:'对标分析报告',author:'陈刚',mine:false,vis:'public',status:'published',date:'3月28日'},
+    {id:6,title:'与中科院宁波材料所专家交流纪要',desc:'共聚酯合成工艺优化方向及合作意向',type:'专家交流纪要',author:'我',mine:true,vis:'private',status:'draft',date:'今天'},
+  ],
+  modal:null, mid:null,
+  uf:{title:'',desc:'',type:'产品分析报告',vis:'team'},
+};
+
+const I={
+  kb:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>',
+  user:'<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="4.5" r="2.3" stroke="currentColor" stroke-width="1.2"/><path d="M2 11c0-2.21 2.015-4 4.5-4S11 8.79 11 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  up:'<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 9V3M4 5.5L6.5 3 9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.5v.5a.5.5 0 00.5.5h8a.5.5 0 00.5-.5v-.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  cfg:'<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="1.8" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 1v1.2M6.5 10.8V12M1 6.5h1.2M10.8 6.5H12M2.7 2.7l.85.85M9.45 9.45l.85.85M2.7 10.3l.85-.85M9.45 3.55l.85-.85" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  eye:'<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 5.5S2.8 2.5 5.5 2.5 10 5.5 10 5.5 8.2 8.5 5.5 8.5 1 5.5 1 5.5z" stroke="currentColor" stroke-width="1.1"/><circle cx="5.5" cy="5.5" r="1.4" stroke="currentColor" stroke-width="1.1"/></svg>',
+  ed:'<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2-5.5 5.5H2v-2z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>',
+  del:'<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 3h7M4.5 3V2h2v1M3.5 3v5.5a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  plus:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  x:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  search:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  lock:'<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="2" y="5" width="7" height="5" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 5V4a2 2 0 014 0v1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>',
+  back:'<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5 8 10.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+};
+
+function toast(msg){const e=document.getElementById('toast-el');e.textContent=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200)}
+
+/* 判断是否在某个具体类型视图：侧边栏点了某个类型 */
+function inTypeView(){return S.tab==='all'&&S.ft!=='全部'}
+
+function render(){renderPage();renderModal()}
+
+function renderPage(){
+  /* sidebar */
+  const typeNavs=S.types.map(t=>{
+    const c=CC[t]||{dot:'#888'};
+    const cnt=S.docs.filter(d=>d.type===t).length;
+    return `<div class="sbn${S.ft===t&&S.tab==='all'?' on':''}" onclick="clickType('${t}')">
+      <span class="ndot" style="background:${c.dot}"></span>${t}
+      <span class="nbadge">${cnt}</span>
+    </div>`;
+  }).join('');
+
+  const sidebar=`<aside class="sb">
+    <div class="sbn${S.tab==='all'&&S.ft==='全部'?' on':''}" onclick="setGlobal()">${I.kb} 全部文章 <span class="nbadge">${S.docs.filter(d=>d.status==='published').length}</span></div>
+    <div class="sbn${S.tab==='mine'?' on':''}" onclick="setMine()">${I.user} 我的上传 <span class="nbadge">${S.docs.filter(d=>d.mine).length}</span></div>
+    <div class="sb-divider"></div>
+    <div class="sb-sec">文档类型</div>
+    ${typeNavs}
+    ${S.role==='admin'?`<div class="sb-foot"><div class="sbn" onclick="openModal('types')">${I.cfg} 管理文档类型</div></div>`:''}
+  </aside>`;
+
+  /* main content 根据视图变化 */
+  let mainContent='';
+  if(inTypeView()){
+    mainContent=buildTypeView();
+  } else {
+    mainContent=buildDefaultView();
+  }
+
+  const tnav=`<div class="tnav">
+    <div class="logo"><div class="logo-box">${I.kb}</div><span class="logo-name">知识库</span></div>
+    <span class="role-pill${S.role==='admin'?' admin':''}" onclick="switchRole()">${S.role==='admin'?'管理员':'普通用户'}</span>
+    <div class="nav-spacer"></div>
+    <button class="btn-upload" onclick="openModal('upload')">${I.up} 上传材料</button>
+  </div>`;
+
+  document.getElementById('page').innerHTML=`
+    ${tnav}
+    <div class="layout">${sidebar}<div class="main" id="main-area">${mainContent}</div></div>`;
+}
+
+/* 默认视图（全部/我的上传）：检索在上，tab 切换，列表在下 */
+function buildDefaultView(){
+  let docs=S.docs;
+  if(S.tab==='mine') docs=docs.filter(d=>d.mine);
+  if(S.q) docs=docs.filter(d=>(d.title+d.author+d.type).includes(S.q));
+
+  /* 检索框 + 类型筛选胶囊（仅全部文章时显示类型筛选） */
+  const pills=S.tab==='all'
+    ?`<div class="filter-strip">
+        <span class="filter-label">文档类型：</span>
+        ${['全部',...S.types].map(t=>`<span class="fp${S.ft===t?' on':''}" onclick="setFt('${t}')">${t}</span>`).join('')}
+      </div>`
+    :'';
+
+  const searchBar=`<div class="search-bar">
+    <div class="search-input-wrap">
+      ${I.search}
+      <input type="text" placeholder="搜索标题、作者、分类…" value="${S.q}" oninput="doSearch(this.value)">
+      ${S.q?`<span style="font-size:11px;color:var(--color-text-tertiary);cursor:pointer;padding:2px 6px;border-radius:99px;background:var(--color-background-secondary)" onclick="clearQ()">清除</span>`:''}
+    </div>
+    ${pills}
+  </div>`;
+
+  const tabStrip=`<div class="tab-strip">
+    <div class="tab-grp">
+      <div class="tab${S.tab==='all'?' on':''}" onclick="setGlobal()">全部文章</div>
+      <div class="tab${S.tab==='mine'?' on':''}" onclick="setMine()">我的上传</div>
+    </div>
+    <span class="result-count">${docs.length} 篇${S.q?'（匹配"'+S.q+'"）':''}</span>
+  </div>`;
+
+  return searchBar+tabStrip+`<div class="list-area">${buildListRows(docs)}</div>`;
+}
+
+/* 类型视图：仅展示检索框 + 该类型列表，无 tab 切换 */
+function buildTypeView(){
+  const c=CC[S.ft]||{dot:'#888',tag:'#eee',txt:'#444'};
+  let docs=S.docs.filter(d=>d.type===S.ft);
+  if(S.q) docs=docs.filter(d=>(d.title+d.author).includes(S.q));
+
+  const searchBar=`<div class="search-bar">
+    <div class="search-input-wrap">
+      ${I.search}
+      <input type="text" placeholder="在「${S.ft}」中搜索…" value="${S.q}" oninput="doSearch(this.value)">
+      ${S.q?`<span style="font-size:11px;color:var(--color-text-tertiary);cursor:pointer;padding:2px 6px;border-radius:99px;background:var(--color-background-secondary)" onclick="clearQ()">清除</span>`:''}
+    </div>
+  </div>`;
+
+  const typeHeader=`<div class="type-header">
+    <span class="type-header-dot" style="background:${c.dot}"></span>
+    <span class="type-header-name">${S.ft}</span>
+    <span class="type-header-count">${docs.length} 篇文档</span>
+    <button class="back-btn" onclick="setGlobal()">${I.back} 返回全部</button>
+  </div>`;
+
+  return searchBar+typeHeader+`<div class="list-area">${buildListRows(docs)}</div>`;
+}
+
+function buildListRows(docs){
+  if(!docs.length) return `<div class="empty">暂无匹配的文档</div>`;
+  return `<div class="list-hd">
+      <span class="col-t">文档标题</span>
+      <span class="col-y">类型</span>
+      <span class="col-a">作者</span>
+      <span class="col-d">日期</span>
+      <span class="col-op">操作</span>
+    </div>`+
+  docs.map(doc=>{
+    const c=CC[doc.type]||{dot:'#888',tag:'#eee',txt:'#444'};
+    const isDraft=doc.status==='draft';
+    const actions=doc.mine
+      ?(isDraft
+        ?`<div class="act-row">
+            <button class="ia" onclick="openModal('edit',${doc.id})">${I.ed} 编辑</button>
+            <button class="ia" style="color:#1D9E75;background:#E1F5EE;border-color:#A7DECA" onclick="openModal('publish',${doc.id})">${I.up} 重新发布</button>
+          </div>`
+        :`<div class="act-row">
+            <button class="ia" onclick="openModal('settings',${doc.id})">${I.eye} 可见范围</button>
+            <button class="ia" onclick="openModal('edit',${doc.id})">${I.ed} 编辑</button>
+            <button class="ia rd" onclick="openModal('confirm',${doc.id})">${I.del} 下架</button>
+          </div>`)
+      :`<div style="color:var(--color-text-tertiary);font-size:12px">—</div>`;
+    return `<div class="lrow${doc.mine?' mine':''}">
+      <div class="col-t">
+        <div class="doc-name">${doc.title}${isDraft?'<span style="margin-left:6px;font-size:10px;padding:1px 5px;border-radius:3px;background:#FAEEDA;color:#633806">草稿</span>':''}</div>
+        <div class="doc-sub">${doc.desc}</div>
+      </div>
+      <div class="col-y"><span class="tag" style="background:${c.tag};color:${c.txt}"><span style="width:5px;height:5px;border-radius:50%;background:${c.dot};display:inline-block"></span>${doc.type}</span></div>
+      <div class="col-a" style="font-size:12.5px;color:var(--color-text-secondary)">${doc.author}</div>
+      <div class="col-d" style="font-size:12px;color:var(--color-text-tertiary)">${doc.date}</div>
+      <div class="col-op">${actions}</div>
+    </div>`;
+  }).join('');
+}
+
+/* modals */
+function renderModal(){
+  const layer=document.getElementById('modal-layer');
+  if(!S.modal){layer.innerHTML='';return}
+  layer.innerHTML=`<div class="modal-overlay" id="ov">${buildModal()}</div>`;
+  document.getElementById('ov').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+}
+
+function mHead(icon,title){
+  return `<div class="modal-hd">${icon}<h3>${title}</h3><button class="modal-close" onclick="closeModal()">${I.x}</button></div>`;
+}
+function buildModal(){
+  if(S.modal==='upload')   return buildMUpload();
+  if(S.modal==='settings') return buildMSettings();
+  if(S.modal==='edit')     return buildMEdit();
+  if(S.modal==='confirm')  return buildMConfirm();
+  if(S.modal==='publish')  return buildMPublish();
+  if(S.modal==='types')    return buildMTypes();
+  return '';
+}
+function buildMUpload(){
+  const f=S.uf;
+  return `<div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-body">
+      ${mHead(I.up,'上传知识材料')}
+      <div class="fr"><label>标题 <span style="color:var(--color-text-danger)">*</span></label><input type="text" placeholder="请输入文档标题" value="${f.title}" oninput="S.uf.title=this.value"></div>
+      <div class="fr"><label>摘要</label><textarea rows="2" placeholder="简要描述（选填）" oninput="S.uf.desc=this.value">${f.desc}</textarea></div>
+      <div class="fr"><label>文档类型</label><select onchange="S.uf.type=this.value">${S.types.map(t=>`<option${f.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="fr"><label>可见范围</label><select onchange="S.uf.vis=this.value">
+        <option value="public"${f.vis==='public'?' selected':''}>全员可见</option>
+        <option value="team"${f.vis==='team'?' selected':''}>团队可见</option>
+        <option value="private"${f.vis==='private'?' selected':''}>仅自己</option>
+        <option value="draft"${f.vis==='draft'?' selected':''}>保存为草稿</option>
+      </select></div>
+      <div class="fr"><label>上传文件</label>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="btn" style="flex-shrink:0" onclick="toast('文件选择器（原型演示）')">${I.up} 选择文件</button>
+          <span id="upload-filename" style="font-size:12px;color:var(--color-text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">未选择文件</span>
+        </div>
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:5px">支持 PDF、Word、Excel、图片等格式</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn dark" onclick="doUpload()">确认上传</button>
+    </div></div>`;
+}
+function buildMSettings(){
+  const doc=S.docs.find(d=>d.id===S.mid);if(!doc)return'';
+  return `<div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-body">
+      ${mHead(I.eye,'可见范围设置')}
+      <div style="font-size:12.5px;color:var(--color-text-secondary);padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:13px">「${doc.title}」</div>
+      <div class="fr"><label>可见范围</label><select id="vsel">
+        <option value="public"${doc.vis==='public'?' selected':''}>全员可见 — 所有人均可查看</option>
+        <option value="team"${doc.vis==='team'?' selected':''}>团队可见 — 仅团队成员</option>
+        <option value="private"${doc.vis==='private'?' selected':''}>仅自己 — 完全私密</option>
+        <option value="draft">保存为草稿 — 不发布</option>
+      </select></div>
+      <div class="hint-box">${I.lock} <span>仅可修改自己上传的文档可见范围</span></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn dark" onclick="saveSettings()">保存</button>
+    </div></div>`;
+}
+function buildMEdit(){
+  const doc=S.docs.find(d=>d.id===S.mid);if(!doc)return'';
+  return `<div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-body">
+      ${mHead(I.ed,'编辑文档')}
+      <div class="fr"><label>标题</label><input type="text" id="etitle" value="${doc.title}"></div>
+      <div class="fr"><label>摘要</label><textarea rows="2" id="edesc">${doc.desc}</textarea></div>
+      <div class="fr"><label>文档类型</label><select id="etype">${S.types.map(t=>`<option${doc.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn dark" onclick="saveEdit()">确认保存</button>
+    </div></div>`;
+}
+function buildMConfirm(){
+  const doc=S.docs.find(d=>d.id===S.mid);
+  return `<div class="modal" style="max-width:380px" onclick="event.stopPropagation()">
+    <div class="modal-body">
+      ${mHead(I.del,'下架确认')}
+      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">确认下架「${doc?doc.title:''}」？<br>下架后文档转为草稿，其他用户将无法查看。</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn dang" onclick="doUnpublish()">确认下架</button>
+    </div></div>`;
+}
+function buildMPublish(){
+  const doc=S.docs.find(d=>d.id===S.mid);
+  return `<div class="modal" style="max-width:380px" onclick="event.stopPropagation()">
+    <div class="modal-body">
+      ${mHead(I.up,'重新发布确认')}
+      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">确认将「${doc?doc.title:''}」重新发布？<br>发布后团队成员将可查看此文档。</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn dark" onclick="doPublish()">确认发布</button>
+    </div></div>`;
+}
+function buildMTypes(){
+  return `<div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-body">
+      ${mHead(I.cfg,'管理文档类型')}
+      <div class="hint-box" style="margin-bottom:12px">${I.lock} <span>仅管理员可增删文档类型</span></div>
+      ${S.types.map((t,i)=>{
+        const c=CC[t]||{dot:'#888'};const cnt=S.docs.filter(d=>d.type===t).length;
+        return `<div class="type-row">
+          <span style="width:8px;height:8px;border-radius:50%;background:${c.dot};flex-shrink:0"></span>
+          <span style="flex:1;font-size:12.5px;color:var(--color-text-primary)">${t}</span>
+          <span style="font-size:11px;color:var(--color-text-tertiary);margin-right:8px">${cnt} 篇</span>
+          <button class="ia rd" onclick="delType(${i})"${cnt>0?' disabled style="opacity:.35;cursor:default"':''}>${I.del}</button>
+        </div>`;
+      }).join('')}
+      <div style="margin-top:13px;padding-top:13px;border-top:0.5px solid var(--color-border-tertiary)">
+        <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">添加新类型</div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="nt" placeholder="输入类型名称" style="flex:1;padding:7px 10px;font-size:12.5px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);outline:none">
+          <button class="btn prim" onclick="addType()">${I.plus} 添加</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn dark" onclick="closeModal()">完成</button></div></div>`;
+}
+
+/* actions */
+function setGlobal(){S.tab='all';S.ft='全部';S.q='';render()}
+function setMine(){S.tab='mine';S.ft='全部';S.q='';render()}
+function clickType(t){S.tab='all';S.ft=t;S.q='';render()}  /* 点击类型：类型视图 */
+function setFt(t){S.ft=t;render()}                          /* pill 筛选：保持默认视图 */
+function doSearch(v){S.q=v;
+  const m=document.getElementById('main-area');
+  if(m) m.innerHTML=inTypeView()?buildTypeView():buildDefaultView();
+}
+function clearQ(){S.q='';render()}
+function switchRole(){S.role=S.role==='admin'?'user':'admin';toast('已切换为'+(S.role==='admin'?'管理员':'普通用户'));render()}
+function openModal(m,id){S.modal=m;S.mid=id||null;if(m==='upload')S.uf={title:'',desc:'',type:S.types[0],vis:'team'};renderModal()}
+function closeModal(){S.modal=null;S.mid=null;renderModal()}
+
+function doUpload(){
+  if(!S.uf.title.trim()){toast('请填写标题');return}
+  S.docs.unshift({id:Date.now(),title:S.uf.title,desc:S.uf.desc||'暂无摘要',type:S.uf.type,
+    author:'我',mine:true,vis:S.uf.vis==='draft'?'private':S.uf.vis,
+    status:S.uf.vis==='draft'?'draft':'published',date:'今天'});
+  S.modal=null;S.tab='mine';S.ft='全部';S.q='';toast('上传成功！');render();
+}
+function saveSettings(){
+  const v=document.getElementById('vsel').value;
+  const d=S.docs.find(d=>d.id===S.mid);
+  if(d){d.vis=v==='draft'?'private':v;d.status=v==='draft'?'draft':'published';}
+  closeModal();toast('可见范围已更新');renderPage();
+}
+function saveEdit(){
+  const d=S.docs.find(d=>d.id===S.mid);
+  if(d){d.title=document.getElementById('etitle').value;d.desc=document.getElementById('edesc').value;d.type=document.getElementById('etype').value;}
+  closeModal();toast('文档已保存');renderPage();
+}
+function doUnpublish(){
+  const d=S.docs.find(d=>d.id===S.mid);
+  if(d){d.vis='private';d.status='draft';}
+  closeModal();toast('已下架，转为草稿');renderPage();
+}
+function doPublish(){
+  const d=S.docs.find(d=>d.id===S.mid);
+  if(d){d.vis='team';d.status='published';}
+  closeModal();toast('已重新发布');renderPage();
+}
+function delType(i){
+  const t=S.types[i];
+  if(S.docs.some(d=>d.type===t)){toast('该类型下有文档，无法删除');return}
+  S.types.splice(i,1);delete CC[t];
+  if(S.ft===t)S.ft='全部';
+  toast('类型已删除');renderModal();renderPage();
+}
+function addType(){
+  const el=document.getElementById('nt');
+  const v=(el?el.value:'').trim();
+  if(!v){toast('请输入名称');return}
+  if(S.types.includes(v)){toast('类型已存在');return}
+  S.types.push(v);CC[v]={dot:'#888780',tag:'#F1EFE8',txt:'#5F5E5A'};
+  toast('已添加：'+v);renderModal();renderPage();
+}
+
+render();
+</script>
