@@ -335,9 +335,9 @@ function buildMUpload(){
       <div class="fr"><label>摘要</label><textarea rows="2" placeholder="简要描述（选填）" oninput="S.uf.desc=this.value">${f.desc}</textarea></div>
       <div class="fr"><label>文档类型</label><select onchange="S.uf.type=this.value">${S.types.map(t=>`<option${f.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
       <div class="fr"><label>可见范围</label><select onchange="S.uf.vis=this.value">
-        <option value="public"${f.vis==='public'?' selected':''}>全员可见</option>
-        <option value="team"${f.vis==='team'?' selected':''}>团队可见</option>
-        <option value="private"${f.vis==='private'?' selected':''}>仅自己</option>
+        <option value="public"${f.vis==='public'?' selected':''}>全集团可见</option>
+        <option value="team"${f.vis==='team'?' selected':''}>本部门/公司可见</option>
+        <option value="private"${f.vis==='private'?' selected':''}>仅自己可见</option>
       </select></div>
       <div class="fr"><label>上传文件</label>
         <div style="display:flex;align-items:center;gap:10px">
@@ -359,9 +359,9 @@ function buildMSettings(){
       ${mHead(I.eye,'可见范围设置')}
       <div style="font-size:12.5px;color:var(--color-text-secondary);padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:13px">「${doc.title}」</div>
       <div class="fr"><label>可见范围</label><select id="vsel">
-        <option value="public"${doc.vis==='public'?' selected':''}>全员可见 — 所有人均可查看</option>
-        <option value="team"${doc.vis==='team'?' selected':''}>团队可见 — 仅团队成员</option>
-        <option value="private"${doc.vis==='private'?' selected':''}>仅自己 — 完全私密</option>
+        <option value="public"${doc.vis==='public'?' selected':''}>全集团可见 — 集团所有人员可查看</option>
+        <option value="team"${doc.vis==='team'?' selected':''}>本部门/公司可见 — 仅本部门或子公司成员</option>
+        <option value="private"${doc.vis==='private'?' selected':''}>仅自己可见 — 完全私密</option>
       </select></div>
       <div class="hint-box">${I.lock} <span>仅可修改自己上传的文档可见范围</span></div>
     </div>
