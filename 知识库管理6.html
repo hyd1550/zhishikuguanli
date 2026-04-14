@@ -36,11 +36,11 @@
 .main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--color-background-primary)}
 
 /* search bar — 始终显示在列表上方 */
-.search-bar{padding:12px 16px;background:var(--bar-bg);border-bottom:1px solid var(--color-border-secondary);flex-shrink:0}
-.search-input-wrap{display:flex;align-items:center;gap:8px;background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:0 14px;height:40px;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s,box-shadow .15s}
-.search-input-wrap:focus-within{border-color:var(--pu);box-shadow:0 0 0 3px rgba(127,119,221,.12)}
-.search-input-wrap input{flex:1;background:transparent;border:none;outline:none;font-size:13.5px;color:var(--color-text-primary)}
-.search-input-wrap input::placeholder{color:var(--color-text-tertiary)}
+.search-bar{padding:14px 16px;background:var(--bar-bg);border-bottom:1px solid var(--color-border-secondary);flex-shrink:0}
+.search-input-wrap{display:flex;align-items:center;gap:10px;background:var(--color-background-primary);border:2px solid #C4C0F0;border-radius:10px;padding:0 16px;height:46px;box-shadow:0 2px 8px rgba(127,119,221,.1);transition:border-color .15s,box-shadow .15s}
+.search-input-wrap:focus-within{border-color:var(--pu);box-shadow:0 0 0 4px rgba(127,119,221,.15)}
+.search-input-wrap input{flex:1;background:transparent;border:none;outline:none;font-size:14px;color:var(--color-text-primary)}
+.search-input-wrap input::placeholder{color:#9994C4}
 
 /* type filter pills — 检索框下方 */
 .filter-strip{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
@@ -150,7 +150,7 @@ let S={
     {id:3,title:'生物降解材料专利态势评估',desc:'国内外核心专利布局及规避策略建议',type:'专利评估报告',author:'王芳',mine:false,vis:'public',status:'published',date:'4月3日'},
     {id:4,title:'对标巴斯夫 ecoflex® 技术简报',desc:'配方体系、加工工艺与认证标准对比',type:'技术简报',author:'我',mine:true,vis:'team',status:'published',date:'4月1日'},
     {id:5,title:'Q1 降解膜产品对标分析',desc:'农用地膜降解周期、强度及合规性对标',type:'对标分析报告',author:'陈刚',mine:false,vis:'public',status:'published',date:'3月28日'},
-    {id:6,title:'与中科院宁波材料所专家交流纪要',desc:'共聚酯合成工艺优化方向及合作意向',type:'专家交流纪要',author:'我',mine:true,vis:'private',status:'draft',date:'今天'},
+    {id:6,title:'与中科院宁波材料所专家交流纪要',desc:'共聚酯合成工艺优化方向及合作意向',type:'专家交流纪要',author:'我',mine:true,vis:'team',status:'published',date:'今天'},
   ],
   modal:null, mid:null,
   uf:{title:'',desc:'',type:'产品分析报告',vis:'team'},
@@ -287,22 +287,16 @@ function buildListRows(docs){
     </div>`+
   docs.map(doc=>{
     const c=CC[doc.type]||{dot:'#888',tag:'#eee',txt:'#444'};
-    const isDraft=doc.status==='draft';
     const actions=doc.mine
-      ?(isDraft
-        ?`<div class="act-row">
-            <button class="ia" onclick="openModal('edit',${doc.id})">${I.ed} 编辑</button>
-            <button class="ia" style="color:#1D9E75;background:#E1F5EE;border-color:#A7DECA" onclick="openModal('publish',${doc.id})">${I.up} 重新发布</button>
-          </div>`
-        :`<div class="act-row">
+      ?`<div class="act-row">
             <button class="ia" onclick="openModal('settings',${doc.id})">${I.eye} 可见范围</button>
             <button class="ia" onclick="openModal('edit',${doc.id})">${I.ed} 编辑</button>
             <button class="ia rd" onclick="openModal('confirm',${doc.id})">${I.del} 下架</button>
-          </div>`)
+          </div>`
       :`<div style="color:var(--color-text-tertiary);font-size:12px">—</div>`;
     return `<div class="lrow${doc.mine?' mine':''}">
       <div class="col-t">
-        <div class="doc-name">${doc.title}${isDraft?'<span style="margin-left:6px;font-size:10px;padding:1px 5px;border-radius:3px;background:#FAEEDA;color:#633806">草稿</span>':''}</div>
+        <div class="doc-name">${doc.title}</div>
         <div class="doc-sub">${doc.desc}</div>
       </div>
       <div class="col-y"><span class="tag" style="background:${c.tag};color:${c.txt}"><span style="width:5px;height:5px;border-radius:50%;background:${c.dot};display:inline-block"></span>${doc.type}</span></div>
@@ -329,7 +323,6 @@ function buildModal(){
   if(S.modal==='settings') return buildMSettings();
   if(S.modal==='edit')     return buildMEdit();
   if(S.modal==='confirm')  return buildMConfirm();
-  if(S.modal==='publish')  return buildMPublish();
   if(S.modal==='types')    return buildMTypes();
   return '';
 }
@@ -345,7 +338,6 @@ function buildMUpload(){
         <option value="public"${f.vis==='public'?' selected':''}>全员可见</option>
         <option value="team"${f.vis==='team'?' selected':''}>团队可见</option>
         <option value="private"${f.vis==='private'?' selected':''}>仅自己</option>
-        <option value="draft"${f.vis==='draft'?' selected':''}>保存为草稿</option>
       </select></div>
       <div class="fr"><label>上传文件</label>
         <div style="display:flex;align-items:center;gap:10px">
@@ -370,7 +362,6 @@ function buildMSettings(){
         <option value="public"${doc.vis==='public'?' selected':''}>全员可见 — 所有人均可查看</option>
         <option value="team"${doc.vis==='team'?' selected':''}>团队可见 — 仅团队成员</option>
         <option value="private"${doc.vis==='private'?' selected':''}>仅自己 — 完全私密</option>
-        <option value="draft">保存为草稿 — 不发布</option>
       </select></div>
       <div class="hint-box">${I.lock} <span>仅可修改自己上传的文档可见范围</span></div>
     </div>
@@ -403,18 +394,6 @@ function buildMConfirm(){
     <div class="modal-foot">
       <button class="btn" onclick="closeModal()">取消</button>
       <button class="btn dang" onclick="doUnpublish()">确认下架</button>
-    </div></div>`;
-}
-function buildMPublish(){
-  const doc=S.docs.find(d=>d.id===S.mid);
-  return `<div class="modal" style="max-width:380px" onclick="event.stopPropagation()">
-    <div class="modal-body">
-      ${mHead(I.up,'重新发布确认')}
-      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">确认将「${doc?doc.title:''}」重新发布？<br>发布后团队成员将可查看此文档。</p>
-    </div>
-    <div class="modal-foot">
-      <button class="btn" onclick="closeModal()">取消</button>
-      <button class="btn dark" onclick="doPublish()">确认发布</button>
     </div></div>`;
 }
 function buildMTypes(){
@@ -459,14 +438,14 @@ function closeModal(){S.modal=null;S.mid=null;renderModal()}
 function doUpload(){
   if(!S.uf.title.trim()){toast('请填写标题');return}
   S.docs.unshift({id:Date.now(),title:S.uf.title,desc:S.uf.desc||'暂无摘要',type:S.uf.type,
-    author:'我',mine:true,vis:S.uf.vis==='draft'?'private':S.uf.vis,
-    status:S.uf.vis==='draft'?'draft':'published',date:'今天'});
+    author:'我',mine:true,vis:S.uf.vis,
+    status:'published',date:'今天'});
   S.modal=null;S.tab='mine';S.ft='全部';S.q='';toast('上传成功！');render();
 }
 function saveSettings(){
   const v=document.getElementById('vsel').value;
   const d=S.docs.find(d=>d.id===S.mid);
-  if(d){d.vis=v==='draft'?'private':v;d.status=v==='draft'?'draft':'published';}
+  if(d){d.vis=v;}
   closeModal();toast('可见范围已更新');renderPage();
 }
 function saveEdit(){
@@ -475,14 +454,8 @@ function saveEdit(){
   closeModal();toast('文档已保存');renderPage();
 }
 function doUnpublish(){
-  const d=S.docs.find(d=>d.id===S.mid);
-  if(d){d.vis='private';d.status='draft';}
-  closeModal();toast('已下架，转为草稿');renderPage();
-}
-function doPublish(){
-  const d=S.docs.find(d=>d.id===S.mid);
-  if(d){d.vis='team';d.status='published';}
-  closeModal();toast('已重新发布');renderPage();
+  S.docs=S.docs.filter(d=>d.id!==S.mid);
+  closeModal();toast('已下架，文档已从列表移除');renderPage();
 }
 function delType(i){
   const t=S.types[i];
